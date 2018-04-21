@@ -21,11 +21,11 @@ if args.learn:
         hidden_weights, output_weights = generate_weights(args.input, args.hidden, args.output)
         learn = LearnNetwork(hidden_weights, output_weights, args.input, args.hidden, args.output)
         hw, ow =learn.learn_network()
-        i = learn.getImage(learn.getImagePath(0))
+        i = learn.getImage(learn.getImagePath(1, 1000))
         hn, on = recognize(i, args.hidden, args.output, hw, ow);
         print('result 0: ', on)
 
-        i = learn.getImage(learn.getImagePath(1))
+        i = learn.getImage(learn.getImagePath(2,1000))
         hn, on = recognize(i, args.hidden, args.output, hw, ow);
         print('result 1: ', on)
     else:
