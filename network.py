@@ -1,7 +1,10 @@
 import argparse
+import numpy
+import datetime
 from generate_weights import generate_weights
 from learn_network import LearnNetwork
 from recognize_image import recognize
+from check_network import CheckNetwork
 
 parser = argparse.ArgumentParser();
 
@@ -11,6 +14,7 @@ parser.add_argument("--input", help="input neurons number", type=int)
 parser.add_argument("--output", help="output neurons number", type=int)
 parser.add_argument("--hidden", help="hidden neurons number", type=int)
 parser.add_argument("--learn", help="learn neural netowrk", action="store_true")
+parser.add_argument("--check", help="check neural netowrk weights", action="store_true")
 
 
 args = parser.parse_args()
@@ -21,6 +25,10 @@ if args.learn:
         hidden_weights, output_weights = generate_weights(args.input, args.hidden, args.output)
         learn = LearnNetwork(hidden_weights, output_weights, args.input, args.hidden, args.output)
         hw, ow =learn.learn_network()
+
+        name = int(round(datetime.datetime.now().timestamp()))
+        numpy.savetxt(f"{name}_hidden.csv", hw, delimiter=",")
+        numpy.savetxt(f"{name}_output.csv", ow, delimiter=",")
         i = learn.getImage(learn.getImagePath(1, 900))
         hn, on = recognize(i, args.hidden, args.output, hw, ow);
         print('result 0: ', on)
@@ -30,3 +38,11 @@ if args.learn:
         print('result 1: ', on)
     else:
         print("Error")
+elif args.check:
+    if args.check != '' and args.input != 0 and args.output !=0 and args.hidden != 0:
+        hw = numpy.genfromtxt(f"{args.weights}_hidden.csv", delimiter=',')
+        ow = numpy.genfromtxt(f"{args.weights}_output.csv", delimiter=',')
+        check = CheckNetwork(hw, ow, args.input, args.hidden, args.output)
+        check.check_network();
+    else:
+        print("error")
