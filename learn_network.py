@@ -12,7 +12,7 @@ class LearnNetwork:
     input_neurons_number = 0;
     hidden_neurons_number = 0;
     output_neurons_number = 0;
-    eta = 0.3
+    eta = 0.1
     beta = 1
     networkError = 0;
     epoqueErrors = [];
@@ -29,7 +29,7 @@ class LearnNetwork:
 
 
     def calculateTotalNetworkError(self, b):
-        self.networkError += 0.5 * numpy.sum(b * b)
+        self.networkError += numpy.sum(b * b) / self.output_neurons_number
 
     def calcuteError(self, b):
         e_output = numpy.full((self.output_neurons_number, self.hidden_neurons_number+1), 0.0)
@@ -58,8 +58,8 @@ class LearnNetwork:
         formatedImage = '{:0>5}'.format(image)
         if self.input_neurons_number == 49:
             return f"./learning_data/{imageNb-1}.png"
-        elif self.input_neurons_number == 4096:
-            return f"./learning_data/Sample{formatedNb}_small/Sample{formatedNb}/img{formatedNb}-{formatedImage}.png"
+        elif self.input_neurons_number == 1024:
+            return f"./learning_data/small/Sample{formatedNb}/img{formatedNb}-{formatedImage}.png"
         else:
             return f"./learning_data/Sample{formatedNb}/img{formatedNb}-{formatedImage}.png"
 
@@ -95,7 +95,8 @@ class LearnNetwork:
                 print(i, ' image number:', imageNb, "expected result:", t_vector, "result: ",self.output_neurons, 'error', b)
 
             self.epoqueErrors[i%5] = self.networkError
-            isEnough = (round(self.epoqueErrors[0],8) == round(self.epoqueErrors[1],8) == round(self.epoqueErrors[2],8) == round(self.epoqueErrors[3],8) == round(self.epoqueErrors[4],8)) or (abs(self.epoqueErrors[0] - self.epoqueErrors[4]) < 0.02 and max(self.epoqueErrors) < 0.02)
+            isEnough = self.networkError < 0.1 or (round(self.epoqueErrors[0],8) == round(self.epoqueErrors[1],8) == round(self.epoqueErrors[2],8) == round(self.epoqueErrors[3],8) == round(self.epoqueErrors[4],8))
             print('epoque errors', self.epoqueErrors, 'is Enough', isEnough)
             i+=1
+            self.eta  = self.eta - 0.00001;
         return self.hidden_weights, self.output_weights

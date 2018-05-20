@@ -13,6 +13,8 @@ class CheckNetwork:
     beta = 1
     networkError = 0;
     epoqueErrors = [];
+    good_number = [];
+    bad_number = [];
 
     def __init__(self, hidden_weights, output_weights,input_neurons_number, hidden_neurons_number, output_neurons_number):
         self.input_neurons_number = input_neurons_number
@@ -22,14 +24,17 @@ class CheckNetwork:
         self.hidden_weights = hidden_weights
         self.output_weights = output_weights
 
+        self.good_number = numpy.full(self.output_neurons_number, 0)
+        self.bad_number = numpy.full(self.output_neurons_number, 0)
+
 
     def getImagePath(self, imageNb, image):
         formatedNb = '{:0>3}'.format(imageNb)
         formatedImage = '{:0>5}'.format(image)
         if self.input_neurons_number == 49:
             return f"./learning_data/{imageNb-1}.png"
-        elif self.input_neurons_number == 4096:
-            return f"./learning_data/Sample{formatedNb}_small/Sample{formatedNb}/img{formatedNb}-{formatedImage}.png"
+        elif self.input_neurons_number == 1024:
+            return f"./learning_data/small/Sample{formatedNb}/img{formatedNb}-{formatedImage}.png"
         else:
             return f"./learning_data/Sample{formatedNb}/img{formatedNb}-{formatedImage}.png"
 
@@ -53,10 +58,14 @@ class CheckNetwork:
                 t_vector = self.setExpectedResult(imageNb - 1)
 
                 b = on - t_vector;
-                totalError = 0.5 * numpy.sum(b * b)
+
                 totalImages = totalImages + 1
-                if totalError < 0.1:
+                if numpy.argmax(on) == (imageNb - 1):
                     totalCorrect = totalCorrect + 1;
-                print(f'image {image} result {imageNb-1}: ', on, 'expected', t_vector,'whole error: ', totalError )
+                    self.good_number[imageNb-1] =  self.good_number[imageNb-1] + 1;
+                else:
+                    self.bad_number[imageNb - 1] = self.bad_number[imageNb - 1] + 1;
+                    print(f'image {image} result {imageNb-1}: ', on, 'expected', t_vector, 'arg max',numpy.argmax(on) )
 
         print('total images: ', totalImages, ' total good detected: ', totalCorrect, ' % correct: ', (totalCorrect/totalImages) * 100, '%')
+        print('good number', self.good_number, ' bad number', self.bad_number, 'percent good', self.good_number/(self.good_number + self.bad_number))
