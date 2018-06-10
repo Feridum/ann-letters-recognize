@@ -12,12 +12,13 @@ class LearnNetwork:
     input_neurons_number = 0;
     hidden_neurons_number = 0;
     output_neurons_number = 0;
-    eta = 0.1
+    eta =0
     beta = 1
     networkError = 0;
     epoqueErrors = [];
+    errors = []
 
-    def __init__(self, hidden_weights, output_weights,input_neurons_number, hidden_neurons_number, output_neurons_number):
+    def __init__(self, hidden_weights, output_weights,input_neurons_number, hidden_neurons_number, output_neurons_number, eta):
         self.input_neurons_number = input_neurons_number
         self.hidden_neurons_number = hidden_neurons_number
         self.output_neurons_number = output_neurons_number
@@ -27,6 +28,7 @@ class LearnNetwork:
 
         self.epoqueErrors = numpy.full(5, 0.2)
 
+        self.eta = eta;
 
     def calculateTotalNetworkError(self, b):
         self.networkError += numpy.sum(b * b) / self.output_neurons_number
@@ -95,8 +97,11 @@ class LearnNetwork:
                 print(i, ' image number:', imageNb, "expected result:", t_vector, "result: ",self.output_neurons, 'error', b)
 
             self.epoqueErrors[i%5] = self.networkError
+            self.errors.append(self.networkError);
             isEnough = self.networkError < 0.1 or (round(self.epoqueErrors[0],8) == round(self.epoqueErrors[1],8) == round(self.epoqueErrors[2],8) == round(self.epoqueErrors[3],8) == round(self.epoqueErrors[4],8))
             print('epoque errors', self.epoqueErrors, 'is Enough', isEnough)
             i+=1
             self.eta  = self.eta - 0.00001;
-        return self.hidden_weights, self.output_weights
+            if i >=5000:
+                break
+        return isEnough, self.hidden_weights, self.output_weights, numpy.array(self.errors)

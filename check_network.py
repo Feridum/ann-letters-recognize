@@ -1,3 +1,5 @@
+import csv
+
 from scipy import misc
 import numpy
 from recognize_image import recognize
@@ -48,7 +50,7 @@ class CheckNetwork:
         arr = numpy.array(image.flatten() / 255)
         return numpy.insert(arr, 0,1)
 
-    def check_network(self):
+    def check_network(self, path, filename):
         totalImages = 0;
         totalCorrect = 0;
         for image in range(801, 1017):
@@ -66,6 +68,13 @@ class CheckNetwork:
                 else:
                     self.bad_number[imageNb - 1] = self.bad_number[imageNb - 1] + 1;
                     print(f'image {image} result {imageNb-1}: ', on, 'expected', t_vector, 'arg max',numpy.argmax(on) )
+
+        with open(f'{path}{filename}.csv', 'w') as f_output:
+            csv_output = csv.writer(f_output, lineterminator='\n', delimiter=',', dialect="excel")
+            csv_output.writerow([totalImages, totalCorrect, (totalCorrect/totalImages) * 100])
+            csv_output.writerow(self.good_number)
+            csv_output.writerow(self.bad_number)
+            csv_output.writerow(self.good_number/(self.good_number + self.bad_number))
 
         print('total images: ', totalImages, ' total good detected: ', totalCorrect, ' % correct: ', (totalCorrect/totalImages) * 100, '%')
         print('good number', self.good_number, ' bad number', self.bad_number, 'percent good', self.good_number/(self.good_number + self.bad_number))

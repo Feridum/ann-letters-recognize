@@ -15,34 +15,59 @@ parser.add_argument("--output", help="output neurons number", type=int)
 parser.add_argument("--hidden", help="hidden neurons number", type=int)
 parser.add_argument("--learn", help="learn neural netowrk", action="store_true")
 parser.add_argument("--check", help="check neural netowrk weights", action="store_true")
-
+parser.add_argument("--path", help="path for file save")
+parser.add_argument("--name", help="file name")
+parser.add_argument("--eta", help="file name", type=float)
 
 args = parser.parse_args()
 
 
 if args.learn:
     if args.input != 0 and args.output !=0 and args.hidden != 0:
+        if args.eta == '':
+            eta = 0.1
+        else:
+            eta = args.eta
+
         hidden_weights, output_weights = generate_weights(args.input, args.hidden, args.output)
-        learn = LearnNetwork(hidden_weights, output_weights, args.input, args.hidden, args.output)
-        hw, ow =learn.learn_network()
+        learn = LearnNetwork(hidden_weights, output_weights, args.input, args.hidden, args.output, eta)
+        success, hw, ow, errors =learn.learn_network()
 
-        name = int(round(datetime.datetime.now().timestamp()))
-        numpy.savetxt(f"{name}_hidden.csv", hw, delimiter=",")
-        numpy.savetxt(f"{name}_output.csv", ow, delimiter=",")
-        i = learn.getImage(learn.getImagePath(1, 900))
-        hn, on = recognize(i, args.hidden, args.output, hw, ow);
-        print('result 0: ', on)
+        if success:
+            if args.name == '':
+                name = int(round(datetime.datetime.now().timestamp()))
+            else:
+                name = args.name
 
-        i = learn.getImage(learn.getImagePath(2,900))
-        hn, on = recognize(i, args.hidden, args.output, hw, ow);
-        print('result 1: ', on)
+            if args.path == '':
+                path = './'
+            else:
+                path = args.path
+
+            numpy.savetxt(f"{path}{name}_hidden.csv", hw, delimiter=",")
+            numpy.savetxt(f"{path}{name}_output.csv", ow, delimiter=",")
+            numpy.savetxt(f"{path}{name}_errors.csv", errors, delimiter=",")
+
+            print('Success ')
+        else:
+            print('Too much epoques')
     else:
         print("Error")
 elif args.check:
     if args.check != '' and args.input != 0 and args.output !=0 and args.hidden != 0:
+        if args.name == '':
+            name = int(round(datetime.datetime.now().timestamp()))
+        else:
+            name = args.name
+
+        if args.path == '':
+            path = './'
+        else:
+            path = args.path
+
         hw = numpy.genfromtxt(f"{args.weights}_hidden.csv", delimiter=',')
         ow = numpy.genfromtxt(f"{args.weights}_output.csv", delimiter=',')
         check = CheckNetwork(hw, ow, args.input, args.hidden, args.output)
-        check.check_network();
+        check.check_network(path, name);
     else:
         print("error")
