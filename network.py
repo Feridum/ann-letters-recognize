@@ -18,19 +18,29 @@ parser.add_argument("--check", help="check neural netowrk weights", action="stor
 parser.add_argument("--path", help="path for file save")
 parser.add_argument("--name", help="file name")
 parser.add_argument("--eta", help="file name", type=float)
+parser.add_argument("--acc", help="acc", type=float)
 
 args = parser.parse_args()
 
-
 if args.learn:
     if args.input != 0 and args.output !=0 and args.hidden != 0:
-        if args.eta == '':
+        if args.eta == None or args.eta == '':
             eta = 0.1
         else:
             eta = args.eta
 
-        hidden_weights, output_weights = generate_weights(args.input, args.hidden, args.output)
-        learn = LearnNetwork(hidden_weights, output_weights, args.input, args.hidden, args.output, eta)
+        if args.acc == None or args.acc == '':
+            acc = 0.1
+        else:
+            acc = args.acc
+
+        if args.weights == None or args.weights == '' :
+            hidden_weights, output_weights = generate_weights(args.input, args.hidden, args.output)
+        else:
+            hidden_weights = numpy.genfromtxt(f"{args.weights}_hidden.csv", delimiter=',')
+            output_weights = numpy.genfromtxt(f"{args.weights}_output.csv", delimiter=',')
+
+        learn = LearnNetwork(hidden_weights, output_weights, args.input, args.hidden, args.output, eta, acc)
         success, hw, ow, errors =learn.learn_network()
 
         if success:

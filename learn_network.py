@@ -12,13 +12,14 @@ class LearnNetwork:
     input_neurons_number = 0;
     hidden_neurons_number = 0;
     output_neurons_number = 0;
-    eta =0
+    eta =0.1
     beta = 1
     networkError = 0;
     epoqueErrors = [];
     errors = []
+    acc = 0.1
 
-    def __init__(self, hidden_weights, output_weights,input_neurons_number, hidden_neurons_number, output_neurons_number, eta):
+    def __init__(self, hidden_weights, output_weights,input_neurons_number, hidden_neurons_number, output_neurons_number, eta,acc):
         self.input_neurons_number = input_neurons_number
         self.hidden_neurons_number = hidden_neurons_number
         self.output_neurons_number = output_neurons_number
@@ -29,6 +30,7 @@ class LearnNetwork:
         self.epoqueErrors = numpy.full(5, 0.2)
 
         self.eta = eta;
+        self.acc = acc;
 
     def calculateTotalNetworkError(self, b):
         self.networkError += numpy.sum(b * b) / self.output_neurons_number
@@ -98,7 +100,7 @@ class LearnNetwork:
 
             self.epoqueErrors[i%5] = self.networkError
             self.errors.append(self.networkError);
-            isEnough = self.networkError < 0.1 or (round(self.epoqueErrors[0],8) == round(self.epoqueErrors[1],8) == round(self.epoqueErrors[2],8) == round(self.epoqueErrors[3],8) == round(self.epoqueErrors[4],8))
+            isEnough = self.networkError < self.acc or (round(self.epoqueErrors[0],8) == round(self.epoqueErrors[1],8) == round(self.epoqueErrors[2],8) == round(self.epoqueErrors[3],8) == round(self.epoqueErrors[4],8))
             print('epoque errors', self.epoqueErrors, 'is Enough', isEnough)
             i+=1
             self.eta  = self.eta - 0.00001;

@@ -29,7 +29,6 @@ class CheckNetwork:
         self.good_number = numpy.full(self.output_neurons_number, 0)
         self.bad_number = numpy.full(self.output_neurons_number, 0)
 
-
     def getImagePath(self, imageNb, image):
         formatedNb = '{:0>3}'.format(imageNb)
         formatedImage = '{:0>5}'.format(image)
