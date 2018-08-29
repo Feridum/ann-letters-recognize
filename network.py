@@ -8,8 +8,7 @@ from check_network import CheckNetwork
 
 parser = argparse.ArgumentParser();
 
-parser.add_argument("--weights", help="weights to detect the font")
-parser.add_argument("--image", help="path to image to detect")
+parser.add_argument("--weights", help="path to weights to detect the image")
 parser.add_argument("--input", help="input neurons number", type=int)
 parser.add_argument("--output", help="output neurons number", type=int)
 parser.add_argument("--hidden", help="hidden neurons number", type=int)
@@ -17,8 +16,8 @@ parser.add_argument("--learn", help="learn neural netowrk", action="store_true")
 parser.add_argument("--check", help="check neural netowrk weights", action="store_true")
 parser.add_argument("--path", help="path for file save")
 parser.add_argument("--name", help="file name")
-parser.add_argument("--eta", help="file name", type=float)
-parser.add_argument("--acc", help="acc", type=float)
+parser.add_argument("--eta", help="ets value", type=float)
+parser.add_argument("--acc", help="acc value", type=float)
 
 args = parser.parse_args()
 
