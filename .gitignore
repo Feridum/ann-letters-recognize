@@ -101,5 +101,10 @@ ENV/
 .mypy_cache/
 
 
-learning_data/
+#learning_data/
+results/
+results_20/
+better/
+*.csv
+*.rar
 .idea/
